@@ -1,7 +1,7 @@
 
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_document_scanner/flutter_document_scanner.dart';
+//import 'package:flutter_document_scanner/flutter_document_scanner.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myapp/constants.dart';
