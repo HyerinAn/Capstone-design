@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:myapp/config/palette.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:myapp/screens/search_screen.dart';
+import 'package:myapp/screens/home/search_screen.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   const LoginSignupScreen({Key? key}) : super(key: key);
@@ -49,7 +50,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                     ),
                 ),
                 child: Container(
-                  padding: EdgeInsets.only(top: 90, left: 20),
+                  padding: EdgeInsets.only(top: 90),
                   child: Column(
                     children: [
                       RichText(
@@ -327,6 +328,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               onSaved: (value){
                                 userEmail = value!;
                               },
+                              onChanged: (value){
+                                userEmail = value;
+                              },
                               decoration: InputDecoration(
                                   prefixIcon: Icon(
                                     Icons.email,
@@ -364,6 +368,9 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                               },
                               onSaved: (value){
                                 userPassword = value!;
+                              },
+                              onChanged: (value){
+                                userPassword = value;
                               },
                               decoration: InputDecoration(
                                   prefixIcon: Icon(
@@ -444,7 +451,41 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                       }
                         
                       }
+                      if(!isSignupScreen) {
+                        _tryValidation();
 
+                        try {
+                          final newUser =
+                          await _authenticaton.signInWithEmailAndPassword(
+                            email: userEmail,
+                            password: userPassword,
+                          );
+                          if (newUser.user != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                return SearchScreen();
+                              }),
+                            );
+                          }
+                        } catch (e) {
+                          print(e);
+
+                            showCupertinoDialog(context: context, builder: (context) {
+                              return CupertinoAlertDialog(
+                                title: Text("로그인 실패"),
+                                content: Text("다시 시도해주세요"),
+                                actions: [
+                                  CupertinoDialogAction(isDefaultAction: true, child: Text("확인"), onPressed: () {
+                                    Navigator.pop(context);
+                                  })
+                                ],
+                              );
+                            });
+                          }
+
+
+                      }
                     },
                   child: Container(
                     decoration: BoxDecoration(

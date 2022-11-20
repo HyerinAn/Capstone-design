@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import '../../../constants.dart';
+import 'package:myapp/constants.dart';
 
 class HeaderWithSearchBox extends StatelessWidget {
   const HeaderWithSearchBox({
-    Key key,
-    @required this.size,
+    Key? key,
+    required this.size,
   }) : super(key: key);
 
   final Size size;
@@ -15,7 +14,6 @@ class HeaderWithSearchBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: kDefaultPadding * 2.5),
-      // It will cover 20% of our total height
       height: size.height * 0.2,
       child: Stack(
         children: <Widget>[
@@ -36,12 +34,15 @@ class HeaderWithSearchBox extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Text(
-                  'Hi Uishopy!',
-                  style: Theme.of(context).textTheme.headline5.copyWith(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  'Welcome to Receipt More!',
+                  style: TextStyle(
+                      fontSize: 23,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      decorationThickness: 30),
                 ),
                 Spacer(),
-                Image.asset("assets/images/logo.png")
+                Image.asset("assets/images/bill.png")
               ],
             ),
           ),
@@ -62,6 +63,7 @@ class HeaderWithSearchBox extends StatelessWidget {
                     offset: Offset(0, 10),
                     blurRadius: 50,
                     color: kPrimaryColor.withOpacity(0.23),
+
                   ),
                 ],
               ),
@@ -71,25 +73,30 @@ class HeaderWithSearchBox extends StatelessWidget {
                     child: TextField(
                       onChanged: (value) {},
                       decoration: InputDecoration(
-                        hintText: "Search",
+                        hintText: "상품명 검색",
                         hintStyle: TextStyle(
-                          color: kPrimaryColor.withOpacity(0.5),
+                          color: Colors.black26,
+                          fontWeight: FontWeight.bold,
                         ),
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
-                        // surffix isn't working properly  with SVG
-                        // thats why we use row
-                        // suffixIcon: SvgPicture.asset("assets/icons/search.svg"),
+                        // suffixIcon: SvgPicture.asset("assets\icons\search.svg"),
+
                       ),
                     ),
                   ),
-                  SvgPicture.asset("assets/icons/search.svg"),
+                  SvgPicture.asset("assets/icons/search.svg",
+                      color: Colors.blueAccent),
+
+
                 ],
               ),
+
             ),
           ),
         ],
       ),
+
     );
   }
 }

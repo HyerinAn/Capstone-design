@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:myapp/constants.dart';
 
-import '../../../constants.dart';
 
 class TitleWithMoreBtn extends StatelessWidget {
   const TitleWithMoreBtn({
-    Key key,
-    this.title,
-    this.press,
+    Key? key,
+    required this.title,
+    required this.press
   }) : super(key: key);
+
   final String title;
   final Function press;
 
@@ -17,17 +19,24 @@ class TitleWithMoreBtn extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
       child: Row(
         children: <Widget>[
-          TitleWithCustomUnderline(text: title),
+          TitleWithCustomerUnderline(
+              text: title),
           Spacer(),
-          FlatButton(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+          TextButton(
+            onPressed: (){},
+            style: TextButton.styleFrom(
+              primary: kPrimaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              backgroundColor: kPrimaryColor,
             ),
-            color: kPrimaryColor,
-            onPressed: press,
+
             child: Text(
               "More",
               style: TextStyle(color: Colors.white),
+
+
             ),
           ),
         ],
@@ -36,13 +45,14 @@ class TitleWithMoreBtn extends StatelessWidget {
   }
 }
 
-class TitleWithCustomUnderline extends StatelessWidget {
-  const TitleWithCustomUnderline({
-    Key key,
-    this.text,
+class TitleWithCustomerUnderline extends StatelessWidget {
+  const TitleWithCustomerUnderline({
+    Key? key,
+    required this.text,
   }) : super(key: key);
 
   final String text;
+
 
   @override
   Widget build(BuildContext context) {
@@ -52,9 +62,10 @@ class TitleWithCustomUnderline extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(left: kDefaultPadding / 4),
-            child: Text(
-              text,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            child: Text(text,
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           Positioned(
@@ -65,10 +76,10 @@ class TitleWithCustomUnderline extends StatelessWidget {
               margin: EdgeInsets.only(right: kDefaultPadding / 4),
               height: 7,
               color: kPrimaryColor.withOpacity(0.2),
+
             ),
-          )
-        ],
-      ),
+          ),
+        ],),
     );
   }
 }

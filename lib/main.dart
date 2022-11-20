@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/screens/login.dart';
+import 'package:myapp/constants.dart';
+import 'package:myapp/screens/details/components/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async{
@@ -14,9 +15,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Receipt More',
       theme: ThemeData(
-          primarySwatch: Colors.blue
+          scaffoldBackgroundColor: kBackgroundColor,
+          primaryColor: kPrimaryColor,
+          textTheme: Theme.of(context).textTheme.apply(bodyColor: kTextColor),
+          visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LoginSignupScreen(),
     );
