@@ -98,13 +98,11 @@ class HeaderWithSearchBox extends StatelessWidget {
                   IconButton(
                       onPressed: (){
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context)
-                            {
-                              return SearchResultScreen();
-                            }
-                            )
+                          context,
+                          MaterialPageRoute( // 다음 페이지에 data 넘겨줌 (input 검색값으로 사용한 data)
+                              builder: (context) => SearchResultScreen(searchvalue))
                         );
+
                       },
                       icon: Icon(CupertinoIcons.search_circle_fill),
                               iconSize: 40,
