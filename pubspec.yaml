@@ -41,6 +41,8 @@ dependencies:
   firebase_auth: ^4.1.2
   flutter_svg: ^1.1.6
 
+  image_picker: ^0.8.6
+  google_mlkit_text_recognition: ^0.5.0
 
 dev_dependencies:
   flutter_test:

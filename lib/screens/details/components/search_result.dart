@@ -22,7 +22,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-            onPressed: (){},
+            onPressed: (){
+              Navigator.pop(context);
+            },
             icon: Icon(CupertinoIcons.back),
           iconSize: 30,
           color: kPrimaryColor,),

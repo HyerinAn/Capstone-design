@@ -317,7 +317,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
                             TextFormField(
                               key: ValueKey(4),
                               validator: (value){
-                                if(value!.isEmpty || !value.contains('0')){
+                                if(value!.isEmpty || !value.contains('@')){
                                   return '유효한 이메일 주소를 입력해주세요.';
                                 }
                                 return null;
