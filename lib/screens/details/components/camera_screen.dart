@@ -20,7 +20,6 @@ class _CameraScreenState extends State<CameraScreen> {
   String _extractText = '';
   XFile? _pickedImage;
   final ImagePicker _picker = ImagePicker();
-  //final _controller = DocumentScannerController();
 
   getImage(ImageSource source) async {
     try {
@@ -50,13 +49,116 @@ class _CameraScreenState extends State<CameraScreen> {
     _extractText = "";
     for (TextBlock block in recognizedText.blocks) {
       for (TextLine line in block.lines) {
-        //_extractText = _extractText + line.text+ " ";
-        _extractText = _extractText + line.text+ "\n";
+        _extractText = _extractText + line.text+ " ";
+        //_extractText = _extractText + line.text+ "\n";
       }
     }
     _scanning = false;
+
+    //=========================================
+    getBlock(recognizedText);
+    getLine(recognizedText);
+    getElement(recognizedText);
+    matchPhoneNumber();
+    matchAddress();
+    matchDate();
+    matchMoney();
+    //=========================================
     setState(() {});
   }
+
+
+  //===========================================================
+  String _text = '';
+  List<String> _blocks = []; List<String> _lines = []; List<String> _elements = [];
+
+  printText(List<String> text){ //String List 출력용
+    _text = '';
+    for (int i = 0; i < text.length; i++){
+      _text = _text + '${i+1} : ${text[i]} \n';
+    }
+    print(_text);
+  }
+
+  getBlock(RecognizedText recognizedText){
+    _blocks = [];
+    for (TextBlock block in recognizedText.blocks) {
+      _blocks.add(block.text);
+    }
+    //printText(_blocks);  // <- 실행창에 출력
+    setState(() {});
+  }
+
+  getLine(RecognizedText recognizedText){
+    _lines = [];
+    for (TextBlock block in recognizedText.blocks) {
+      for (TextLine line in block.lines) {
+        _lines.add(line.text);
+      }
+    }
+    printText(_lines); // <- 실행창에 출력
+    setState(() {});
+  }
+
+  getElement(RecognizedText recognizedText){
+    _elements = [];
+    for (TextBlock block in recognizedText.blocks) {
+      for (TextLine line in block.lines) {
+        for (TextElement element in line.elements){
+          _elements.add(element.text);
+        }
+      }
+    }
+    //printText(_elements); // <- 실행창에 출력
+    setState(() {});
+  }
+
+  matchPhoneNumber() {
+    _text = '';
+    final regExp = RegExp(r'전화:(\d{3})\)\D(\d{3})\D(\d{4})');
+    for( String t in _blocks) {
+      Iterable<RegExpMatch> matches = regExp.allMatches(t);
+      for (final Match m in matches) {
+        String match = m[0]!;
+        _text = match;
+      }
+    }
+    print("전화번호 : "+ _text);
+    setState(() {});
+  }
+
+  matchAddress() {
+    _text = '';
+    final regExp = RegExp(r'주소:', unicode: true);
+    for( String t in _lines) {
+      bool matches = regExp.hasMatch(t);
+      if(matches){
+        _text = t;
+      }
+    }
+    print("주소 : "+ _text);
+    setState(() {});
+  }
+  matchDate() {
+    _text = '';
+    final regExp = RegExp(r'(\d{4}-\d{2}-\d{2})');
+    for( String t in _blocks) {
+      Iterable<RegExpMatch> matches = regExp.allMatches(t);
+      for (final Match m in matches) {
+        String match = m[0]!;
+        _text = match;
+      }
+    }
+    print("날짜 : "+ _text);
+    setState(() {});
+  }
+
+  matchMoney(){
+    _text = _blocks.last;
+    print("합계 : "+ _text);
+    setState(() {});
+  }
+  //===========================================================
 
 
   @override
