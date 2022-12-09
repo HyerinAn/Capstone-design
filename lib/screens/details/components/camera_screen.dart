@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:myapp/constants.dart';
+import 'package:myapp/screens/details/components/camera_screen_information.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
@@ -20,6 +21,7 @@ class _CameraScreenState extends State<CameraScreen> {
   String _extractText = '';
   XFile? _pickedImage;
   final ImagePicker _picker = ImagePicker();
+  Information information = Information();
 
   getImage(ImageSource source) async {
     try {
@@ -59,10 +61,12 @@ class _CameraScreenState extends State<CameraScreen> {
     getBlock(recognizedText);
     getLine(recognizedText);
     getElement(recognizedText);
+
     matchPhoneNumber();
     matchAddress();
     matchDate();
-    matchMoney();
+    //matchMoney();
+    matchProductName();
     //=========================================
     setState(() {});
   }
@@ -115,47 +119,133 @@ class _CameraScreenState extends State<CameraScreen> {
 
   matchPhoneNumber() {
     _text = '';
-    final regExp = RegExp(r'전화:(\d{3})\)\D(\d{3})\D(\d{4})');
-    for( String t in _blocks) {
+    final regExp = RegExp(r'전?화?번?호?\s{0,}:?\s{0,}0(2|51|53|32|62|42|52|44|31|33|43|41|63|61|54|55|64)\D{0,}(\d{3})\D{0,}(\d{4})');
+    //final regExp = RegExp(r'전?화?\s{0,}:?\s{0,}0[2-6][1-5](\s|-){0,}(\d{3})(\s|-){0,}(\d{4})');
+    //final regExp1 = RegExp(r'0(\d{1,2})\D?(\d{3})\D?(\d{4})');
+    for( String t in _lines) {
       Iterable<RegExpMatch> matches = regExp.allMatches(t);
       for (final Match m in matches) {
         String match = m[0]!;
         _text = match;
       }
+      if(_text != '') break;
     }
-    print("전화번호 : "+ _text);
+    information.phonenumber = _text;
+    print(information.phonenumber);
     setState(() {});
   }
 
   matchAddress() {
     _text = '';
-    final regExp = RegExp(r'주소:', unicode: true);
+    final regExp = RegExp(r'주소\s?:?');
+    final regExp1 = RegExp(r'(주|수)?소?\s?:?[ㄱ-ㅎ가-힣]{1,}시');
+    //final regExp = RegExp(r'[지-짛][시-싷](:| :)', unicode: true);
     for( String t in _lines) {
       bool matches = regExp.hasMatch(t);
-      if(matches){
-        _text = t;
+      bool matches1 = regExp1.hasMatch(t);
+      if(matches||matches1){
+        _text += t;
+        break;
       }
     }
-    print("주소 : "+ _text);
+    information.address = _text;
+    print(information.address);
     setState(() {});
   }
+
   matchDate() {
     _text = '';
-    final regExp = RegExp(r'(\d{4}-\d{2}-\d{2})');
-    for( String t in _blocks) {
+    //final regExp = RegExp(r'(\d{4}-\d{2}-\d{2})');
+    final regExp = RegExp(r'(20\d{2}\D{0,}\d{2}\D{0,}\d{2})');
+    final regExp1 = RegExp(r'(판매일:\d{2}-\d{2}-\d{2})');
+    for( String t in _lines) {
       Iterable<RegExpMatch> matches = regExp.allMatches(t);
+      if (matches.length==0) matches = regExp1.allMatches(t);
       for (final Match m in matches) {
         String match = m[0]!;
         _text = match;
       }
+      if(_text != '') break;
     }
-    print("날짜 : "+ _text);
+    information.date = _text;
+    print(information.date);
     setState(() {});
   }
 
-  matchMoney(){
-    _text = _blocks.last;
-    print("합계 : "+ _text);
+  // matchDate() {
+  //   _text = '';
+  //   final regExp = RegExp(r'(\d{4})');
+  //   for( String t in _lines) {
+  //     bool matches = regExp.hasMatch(t);
+  //     if(matches){
+  //       _text = t;
+  //       break;
+  //     }
+  //   }
+  //   print("날짜 : "+ _text);
+  //   setState(() {});
+  // }
+
+  // matchMoney(){
+  //   _text = _blocks.last;
+  //   print("합계 : "+ _text);
+  //   setState(() {});
+  // }
+
+  matchProductName(){
+    List<String> ProductName = [];
+    //final regExp_start = RegExp('상품명');
+    //final regExp_start = RegExp('[사-싷][파-핗][마-밓]');
+    final regExp_start = RegExp(r'[사-싷]?[가-힣][마-밓]$');
+    //final regExp_start1 = RegExp(r'(20\d{2}\D{0,}\d{2}\D{0,}\d{2})');
+    final regExp_start1 = RegExp(r'주소\s?:?');
+    final regExp_start2 = RegExp(r'(주|수)?소\s?:?[ㄱ-ㅎ가-힣]{1,}시');
+    final regExp_start3 = RegExp(r'(Pos|계산원)');
+    final regExp = RegExp(r'[0-9|\s]{5,}[0-9]$');
+    final regExp1 = RegExp(r'[ㄱ-ㅎ가-힣]');
+    final regExp2 = RegExp(r'0(\d{2}) ');
+    final regExp3 = RegExp(r'001 ');
+
+    final regExp_end1 = RegExp('단가');
+    final regExp_end2 = RegExp('수량');
+
+    for (int i = 0; i<_lines.length; i++){
+      bool match = regExp3.hasMatch(_lines[i]);
+      if(match){
+        while(i<_lines.length) {
+          if (regExp1.hasMatch(_lines[i])&&regExp2.hasMatch(_lines[i])){ ProductName.add(_lines[i]);}
+          i++;
+        }
+      }
+    }
+
+    if(ProductName.length==0) {
+      for (int i = 0; i<_lines.length; i++){
+        bool matches_start = regExp_start.hasMatch(_lines[i]);
+        bool matches_start1 = regExp_start1.hasMatch(_lines[i]);
+        bool matches_start2 = regExp_start2.hasMatch(_lines[i]);
+        bool matches_start3 = regExp_start3.hasMatch(_lines[i]);
+
+        if(matches_start||matches_start1||matches_start2||matches_start3){
+          while(true){
+            i++;
+            bool matches = regExp.hasMatch(_lines[i]);
+            bool matches_end1 = regExp_end1.hasMatch(_lines[i]);
+            bool matches_end2 = regExp_end2.hasMatch(_lines[i]);
+            if(matches){
+              bool matches1 = regExp1.hasMatch(_lines[i-1]);
+              if(matches1) ProductName.add(_lines[i-1]);
+            }
+            if(matches_end1||matches_end2||(i==_lines.length-1)){
+              break;
+            }
+          }
+        }
+      }
+    }
+    information.products = ProductName;
+    print("=============================");
+    if(information.products.length>0) printText(information.products);
     setState(() {});
   }
   //===========================================================
@@ -268,8 +358,26 @@ class _CameraScreenState extends State<CameraScreen> {
               ],
             )),
       ),
+
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.search),
+        backgroundColor: kPrimaryColor,
+        onPressed: (){
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CameraScreenInformation(information)
+              ));
+        },
+      ),
+
     );
   }
 
 
+}
+
+class Information{
+  String address = '';
+  String date = '';
+  String phonenumber = '';
+  List<String> products = [];
 }
